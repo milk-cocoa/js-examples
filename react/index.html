@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv='Content-type' content='text/html; charset=utf-8'>
+    <title>Basic Example</title>
+  </head>
+  <body>
+    <h1>Basic Example</h1>
+    <div id="container">
+    </div>
+    <h4>Example Details</h4>
+    <p>This is an example of milkcocoa with React.js<p>
+    <p>
+      Learn more about React at
+      <a href="http://facebook.github.io/react" target="_blank">facebook.github.io/react</a>.
+      And learn more about Milkcocoa at
+      <a href="https://mlkcca.com">Milkcocoa</a>.
+    </p>
+    <script src="http://cdn.mlkcca.com/v2.0.0/milkcocoa.js"></script>
+    <script src="react.min.js"></script>
+    <script src="JSXTransformer.js"></script>    
+    <script type="text/jsx">
+var TodoList = React.createClass({
+  render: function() {
+    var createItem = function(itemText, index) {
+      return <li key={index + itemText}>{itemText}</li>;
+    };
+    return <ul>{this.props.items.map(createItem)}</ul>;
+  }
+});
+var TodoApp = React.createClass({
+  getInitialState: function() {
+    return {items: [], text: ''};
+  },
+  componentWillMount : function() {
+  	var self = this;
+  	var milkcocoa = new MilkCocoa("hotia8yv36p.mlkcca.com");
+  	this.milkcocoaDataStore = milkcocoa.dataStore("chatreact");
+  	this.milkcocoaDataStore.on('push', function(pushed) {
+  		self.state.items.push(pushed.value.content);
+  		self.setState({
+	      	items: self.state.items
+	    });
+  	});
+  },
+  onChange: function(e) {
+    this.setState({text: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    //var nextItems = this.state.items.concat([this.state.text]);
+    this.milkcocoaDataStore.push({content : this.state.text});
+    var nextText = '';
+    this.setState({text: nextText});
+  },
+  render: function() {
+    return (
+      <div>
+        <h3>TODO</h3>
+        <TodoList items={this.state.items} />
+        <form onSubmit={this.handleSubmit}>
+          <input onChange={this.onChange} value={this.state.text} />
+          <button>{'Add #' + (this.state.items.length + 1)}</button>
+        </form>
+      </div>
+    );
+  }
+});
+
+React.render(<TodoApp />, window.document.getElementById("container") );
+
+    </script>
+  </body>
+</html>
